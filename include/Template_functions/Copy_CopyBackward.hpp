@@ -29,7 +29,7 @@ U* Copy(T* src_begin, T* src_end, U* dest){
 // Когда использовать: Когда целевой диапазон перекрывается с исходным, особенно сдвиг элементов вправо внутри одного массива.
 // Например, смещение части массива без потери данных.
 template <typename T, typename U>
-U* CopyBackward(T* src_begin, T* src_end, U* dest_end) {
+U* CopyBackward(const T* src_begin, const T* src_end, U* dest_end) {
     auto current_src = src_end - 1;
     auto current_dest = dest_end - 1;
 
@@ -38,5 +38,5 @@ U* CopyBackward(T* src_begin, T* src_end, U* dest_end) {
         --current_src;
         --current_dest;
     }
-    return current_dest + 1;
+    return dest_end;
 }
