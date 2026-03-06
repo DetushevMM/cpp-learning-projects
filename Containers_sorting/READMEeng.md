@@ -130,16 +130,11 @@ M = total number of containers.
 
 g++ main.cpp -O2 -std=c++17 -Wall -Wextra -pedantic -o warehouse
 
-
-## 📁 Suggested Project Structure
-
-warehouse-sort/ │ ├── src/ │   └── main.cpp │ ├── tests/ │   ├── test1.txt │   ├── test2.txt │   └── test3.txt │ ├── .github/ │   └── workflows/ │       └── build.yml │ └── README.md
-
 ---
 
 ## 🧪 Example Test Cases
 
-### `tests/test1.txt`
+### `tests/test1`
 
 3 4 1 2 3 2 0 0
 
@@ -147,7 +142,7 @@ Expected: non-zero output.
 
 ---
 
-### `tests/test2.txt`
+### `tests/test2`
 
 2 3 1 2 1 0
 
@@ -157,7 +152,7 @@ Expected:
 
 ---
 
-### `tests/test3.txt`
+### `tests/test3`
 
 3 0 0 0
 
@@ -165,11 +160,6 @@ Expected: no output (already sorted).
 
 ---
 
-# ⚙️ GitHub Actions CI
-
-Create file:
-
-.github/workflows/build.yml
 
 ### `build.yml`
 
@@ -200,3 +190,4 @@ jobs:
             echo "Running $file"
             ./warehouse < $file > output.txt
           done
+
