@@ -13,8 +13,6 @@ private:
 public:
     // Конструкторы
     Complex() : re_(0.0), im_(0.0) {}
-    // Убрал explicit, чтобы можно было складывать Complex c = c + 5.0; 
-    // В математических классах это считается хорошим тоном.
     Complex(double re) : re_(re), im_(0.0) {}
     Complex(double re, double im) : re_(re), im_(im) {}
 
@@ -29,30 +27,25 @@ public:
         return std::hypot(re_, im_);
     }
 
-    // --- Операторы инкремента ---
-
-    // Префиксный (++c)
+    // Префиксный инкремент (++c)
     Complex& operator++() {
         re_ += 1.0;
         return *this;
     }
 
-    // Постфиксный (c++)
+    // Постфиксный инкремент (c++)
     Complex operator++(int) {
         Complex temp = *this;
         re_ += 1.0;
         return temp;
     }
     // Префиксный декремент (--c)
-    // Сначала уменьшает значение, потом возвращает ссылку на объект
     Complex& operator--() {
         re_ -= 1.0;
         return *this;
     }
 
     // Постфиксный декремент (c--)
-    // Сначала сохраняет копию старого значения, уменьшает текущее, 
-    // а возвращает сохраненную копию (состояние "до изменения")
     Complex operator--(int) {
         Complex temp = *this;
         re_ -= 1.0;
@@ -60,8 +53,7 @@ public:
     }
 
 
-    // --- Операторы присваивания с арифметикой ---
-
+    // Операторы присваивания с арифметикой +=, -=, *=, /=
     Complex& operator+=(const Complex& rhs) {
         re_ += rhs.re_;
         im_ += rhs.im_;
@@ -112,7 +104,7 @@ public:
         return lhs /= rhs;
     }
 
-    // --- Сравнение ---
+    // Сравнение == и !=
     friend bool operator==(const Complex& a, const Complex& b) {
         return std::abs(a.re_ - b.re_) < Complex::EPS &&
                std::abs(a.im_ - b.im_) < Complex::EPS;
@@ -121,8 +113,6 @@ public:
     friend bool operator!=(const Complex& a, const Complex& b) {
         return !(a == b);
     }
-
-    // --- Ввод и вывод ---
 
     // Красивый вывод: "a + bi" или "a - bi"
     friend std::ostream& operator<<(std::ostream& os, const Complex& c) {
@@ -136,6 +126,7 @@ public:
         return os;
     }
 
+    // Ввод
     friend std::istream& operator>>(std::istream& is, Complex& c) {
         is >> c.re_ >> c.im_;
         return is;
