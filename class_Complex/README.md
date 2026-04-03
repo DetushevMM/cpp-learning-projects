@@ -1,136 +1,55 @@
-Complex Number Class (C++)
+## 🧮 ComplexMath-CPP
 
-📌 Overview
+Удобная и надежная реализация класса комплексных чисел на C++ для инженерных и математических задач.
 
-This project implements a custom "Complex" number class in C++, providing a full set of arithmetic operations, comparisons, and utility functions. The implementation is designed to mimic the behavior of standard complex number libraries while maintaining strict control over floating-point precision and operator semantics.
+## 🌟 Зачем это нужно?
 
-The class supports both "Complex"-to-"Complex" and "Complex"-to-"double" interactions, making it flexible for numerical computations, simulations, and algorithmic tasks.
+Стандартные типы данных (вроде double или float) не позволяют работать с комплексными числами напрямую. В таких областях, как электротехника (расчет цепей переменного тока), квантовая физика или обработка сигналов, комплексные числа — это база.
 
----
+Этот проект решает задачу:
+- Созданный класс Complex, который позволяет писать математический код так же просто, как в тетради. Вместо вызова громоздких функций, вы можете просто писать z = a + b * c, и программа сама поймет, как выполнить расчет.
 
-🎯 Problem Statement
+## ✨ Ключевые возможности
 
-Standard libraries (such as "std::complex") are often treated as black boxes. The goal of this project is to:
+* Интуитивный синтаксис: Перегружены все операторы: +, -, *, /, а также их краткие формы +=, -=, *=, /=.
+* Смешанные вычисления: Благодаря поддержке неявного преобразования, вы можете свободно смешивать Complex и double в одном выражении.
+* Умное форматирование: Числа выводятся в привычном виде 5 + 3i или 5 - 3i. Если мнимая часть равна 0, она скрывается.
+* Инкременты и декременты: Реализована логика ++ и -- (изменяют действительную часть), что удобно для циклов и итераций.
+* Математическая точность: Для вычисления модуля используется std::hypot, исключающая ошибки переполнения при работе с очень большими числами.
+* Безопасность: Проверка деления на ноль защищает программу от критических ошибок.
 
-- Reimplement complex number arithmetic from scratch
-- Ensure numerical stability when working with floating-point values
-- Provide a clean and predictable operator interface
-- Handle edge cases such as division by zero
-- Maintain symmetry of operations ("a + b == b + a" where applicable)
+## 🛠 Как запустить
+- Поскольку проект представлен в виде одного файла .cpp, вам не нужно ничего настраивать.
+- Компиляция через терминал (g++):
 
-This task is commonly used in technical interviews to evaluate:
+g++ main.cpp -o Complex_app
+./complex_app
 
-- Operator overloading skills
-- Understanding of floating-point precision
-- API design in C++
-- Code correctness and robustness
+## 📝 Пример кода (из файла)
 
----
+Complex c1(3.0, 4.0); // 3 + 4i
 
-⚙️ Features
+Complex c2(1.0, -2.0); // 1 - 2i
 
-✔ Core Functionality
+Complex sum = c1 + c2;       // 4 + 2i
 
-- Real and imaginary parts access ("Real()", "Imag()")
-- Magnitude calculation ("Abs()")
-- Safe division with zero-check
+Complex prod = c1 * 2.0;     // 6 + 8idouble module = c1.Abs();    // 5.0 (Пифагорова тройка)
 
-✔ Arithmetic Operations
+std::cout << "Сумма: " << sum << std::endl;
 
-Supports full arithmetic with:
+std::cout << "Модуль c1: " << module << std::endl;
 
-- "Complex + Complex"
-- "Complex - Complex"
-- "Complex * Complex"
-- "Complex / Complex"
+## 📐 Математическая справка
 
-And mixed operations:
+В этом классе реализованы следующие правила:
 
-- "Complex + double"
-- "double + Complex"
-- (same for "-", "*", "/")
+   1. Сложение: $(a + bi) + (c + di) = (a+c) + (b+d)i$
+   2. Умножение: $(a + bi) \cdot (c + di) = (ac - bd) + (ad + bc)i$
+   3. Деление: Используется метод сопряженных чисел с проверкой знаменателя на равенство нулю ($\epsilon = 10^{-12}$).
 
-✔ Operator Overloading
-
-- Compound operators: "+=", "-=", "*=", "/="
-- Unary operators: "+", "-"
-- Comparison operators: "==", "!=" (with EPS tolerance)
-
-✔ Numerical Stability
-
-Floating-point comparisons use an epsilon:
-
-static constexpr double EPS = 1e-12;
-
-This avoids incorrect equality results due to precision errors.
-
----
-
-🧮 Mathematical Model
-
-A complex number is defined as:
-
-z = a + bi
-
-Where:
-
-- "a" — real part
-- "b" — imaginary part
-- "i² = -1"
-
-Multiplication
-
-(a + bi)(c + di) = (ac - bd) + (ad + bc)i
-
-Division
-
-(a + bi) / (c + di) =
-[(ac + bd) + (bc - ad)i] / (c² + d²)
-
----
-
-🚀 Usage Example
-
-#include "Complex.hpp"
-#include <iostream>
-
-int main() {
-    Complex a(3, 4);
-    Complex b(1, -2);
-
-    Complex sum = a + b;
-    Complex product = a * b;
-    Complex quotient = a / b;
-
-    std::cout << "Abs(a) = " << a.Abs() << std::endl;
-
-    if (a != b) {
-        std::cout << "Numbers are different\n";
-    }
-
-    return 0;
-}
-
----
-
-⚠️ Error Handling
-
-Division by zero is explicitly checked:
-
-if (std::abs(d) < EPS) {
-    throw std::invalid_argument("Division by zero");
-}
-
----
-
-🏗 Design Decisions
-
-- Pass-by-value for lhs in operators → enables chaining and reuse of compound operators
-- EPS-based comparison → avoids floating-point pitfalls
-- Explicit constructor → prevents unintended implicit conversions
-- Symmetric operator support → consistent mathematical behavior
+------------------------------
+## 👨‍💻 О разработке
+Код написан с соблюдением принципов инкапсуляции (данные скрыты в private) и использует friend функции для обеспечения симметричности математических операций.
+------------------------------
 
 
-👤 Author
-
-Self-implemented as part of C++ practice and interview preparation.
