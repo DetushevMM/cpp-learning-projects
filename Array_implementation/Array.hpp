@@ -59,8 +59,6 @@ public:
 	}
 };
 
-#define ARRAY_TRAITS_IMPLEMENTED
-
 template <class T>
 size_t GetSize(const T&) {
 	return 0;
