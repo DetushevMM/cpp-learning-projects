@@ -6,20 +6,16 @@
 #include <iostream>
 #include <utility>
 
-namespace {
-
-    size_t ClampedStrLen(const char* str, size_t max_len) {
-        if (str == nullptr) {
-            return 0;
-        }
-        size_t len = 0;
-        while (len < max_len && str[len] != '\0') {
-            ++len;
-        }
-        return len;
+size_t ClampedStrLen(const char* str, size_t max_len) {
+    if (str == nullptr) {
+        return 0;
     }
-
-}  // namespace
+    size_t len = 0;
+    while (len < max_len && str[len] != '\0') {
+        ++len;
+    }
+    return len;
+}
 
 String::String() : data_(nullptr), size_(0), capacity_(0) {}
 
