@@ -37,7 +37,7 @@ public:
 			if (data_[i] != str[i]) {
 				return false;
 			}
-			++i
+			++i;
 		}
 		return i == size_ && str[i] == '\0';
 	}
