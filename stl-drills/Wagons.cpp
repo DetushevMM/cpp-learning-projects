@@ -35,44 +35,51 @@
 #include <string>
 
 void MakeTrain() {
+    // Состав поезда. deque удобен для операций с обоих концов: push_front / push_back и удаление диапазонов.
     std::deque<int> train;
     std::string command;
 
     while (std::getline(std::cin, command)) {
         if (command.empty()) {
-            continue;
+            continue;  // Пустые строки пропускаем.
         }
 
-        int W = 0;
-        int N = 0;
+        int W = 0;  // номер вагона для команд +left/+right
+        int N = 0;  // количество вагонов для команд -left/-right
 
+        // Команда добавления: +left W или +right W
         if (command[0] == '+') {
-            size_t pos = command.find(' ');
-            std::string direction = command.substr(1, pos - 1);
-            W = std::stoi(command.substr(pos + 1));
+            size_t pos = command.find(' ');                      // позиция пробела между направлением и числом
+            std::string direction = command.substr(1, pos - 1);  // "left" или "right"
+            W = std::stoi(command.substr(pos + 1));              // парсим номер вагона
 
+            // Добавляем вагон в нужный конец состава.
             if (direction == "left") {
                 train.push_front(W);
             } else {
                 train.push_back(W);
             }
+        // Команда удаления: -left N или -right N
         } else if (command[0] == '-') {
             size_t pos = command.find(' ');
-            std::string side_str = command.substr(1, pos - 1);
-            N = std::stoi(command.substr(pos + 1));
+            std::string side_str = command.substr(1, pos - 1);  // "left" или "right"
+            N = std::stoi(command.substr(pos + 1));             // сколько вагонов убрать
 
             if (side_str == "left") {
+                // Если N больше/равно длине, удаляем весь состав.
                 if (N >= (int)train.size()) {
                     train.clear();
                 } else {
+                    // Иначе удаляем диапазон из первых N элементов.
                     train.erase(train.begin(), train.begin() + N);
                 }
             } else {
+                // Аналогично для правого края.
                 if (N >= (int)train.size()) {
                     train.clear();
                 } else {
                     auto end_it = train.end();
-                    auto start_it = end_it - N;
+                    auto start_it = end_it - N;  // итератор на первый удаляемый справа
                     train.erase(start_it, end_it);
                 }
             }
