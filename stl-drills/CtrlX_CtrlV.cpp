@@ -30,30 +30,30 @@ Ctrl+X, Ctrl+V
 Формат вывода
 Выведите получившийся файл построчно.
 
-Пример 1                Пример 2
+Пример 1                   Пример 2
 Ввод                       Ввод
-program                   copy
-is awesome              paste
+program                    copy
+is awesome                 paste
 My
 is awful                   Ctrl+X
-                              Ctrl+V
-Down                     Ctrl+V
-Down                     Ctrl+V
-Down                     Ctrl+X
-Ctrl+X                    Ctrl+V
+                           Ctrl+V
+Down                       Ctrl+V
+Down                       Ctrl+V
+Down                       Ctrl+X
+Ctrl+X                     Ctrl+V
 Up                         Ctrl+V
-Ctrl+X                   Ctrl+V
+Ctrl+X                     Ctrl+V
 Up
 Up
 Ctrl+V
 
-Вывод                   Вывод
-My                        copy
-program                 copy
-is awesome            copy
-                            paste
-                            paste
-                            paste
+Вывод                      Вывод
+My                         copy
+program                    copy
+is awesome                 copy
+                           paste
+                           paste
+                           paste
 
 Примечание
 Если условие кажется вам запутанным, попробуйте воспользоваться настоящим текстовым редактором, например Sublime. 
@@ -70,57 +70,73 @@ is awesome            copy
 #include <string>
 
 int main() {
+    // Храним строки файла в двусвязном списке:
+    // list удобен для вставки/удаления по итератору без сдвигов элементов.
     std::list<std::string> text;
     std::string line;
 
     while (std::getline(std::cin, line)) {
         text.push_back(line);
     }
-
+    // Здесь соберем команды редактора (Up/Down/Ctrl+X/Ctrl+V).
     std::list<std::string> commands;
 
+    // Идем с конца: по условию команды находятся в конце ввода.
+    // Чтобы сохранить исходный порядок команд, кладем их в начало списка commands.
     while (!text.empty()) {
         std::string s = text.back();
         if (s == "Up" || s == "Down" || s == "Ctrl+X" || s == "Ctrl+V") {
-            commands.push_front(s);
-            text.pop_back();
+            commands.push_front(s);  // восстанавливаем порядок команд
+            text.pop_back();         // убираем команду из "текста"
         } else {
             break;
         }
     }
 
     auto cursor = text.begin();
+    
+    // Буфер обмена: хранит последнюю вырезанную непустую строку.
     std::string buffer;
 
     for (const auto& cmd : commands) {
         if (cmd == "Down") {
+            // Сдвиг вниз: если уже на последней строке, команда игнорируется.
             auto it = cursor;
-            if (it != text.end()) ++it;
-            if (it != text.end()) cursor = it;
-        }
-        else if (cmd == "Up") {
+            if (it != text.end()) ++it;         // пробуем перейти к следующей строке
+            if (it != text.end()) cursor = it;  // переход только если строка существует
+        } else if (cmd == "Up") {
+            // Сдвиг вверх: если курсор на первой строке, команда игнорируется.
             if (cursor != text.begin()) --cursor;
-        }
-        else if (cmd == "Ctrl+X") {
+        } else if (cmd == "Ctrl+X") {
+            // Вырезаем текущую строку только если:
+            // 1) курсор указывает на существующую строку
+            // 2) строка не пустая (по условию пустую строку вырезать нельзя)
             if (cursor != text.end() && !cursor->empty()) {
                 buffer = *cursor;
 
+                // Запоминаем соседей до удаления текущего узла.
                 auto next = std::next(cursor);
                 auto prev = (cursor == text.begin() ? text.end() : std::prev(cursor));
 
                 text.erase(cursor);
 
+                // Переставляем курсор:
+                // приоритет у строки снизу, иначе у строки сверху,
+                // если строк не осталось — end().
                 if (next != text.end()) cursor = next;
                 else if (prev != text.end()) cursor = prev;
                 else cursor = text.end();
             }
-        }
-        else if (cmd == "Ctrl+V") {
+        } else if (cmd == "Ctrl+V") {
+            // Вставка работает только если буфер не пуст.
             if (!buffer.empty()) {
                 if (text.empty()) {
+                    // Если текст пуст, просто создаем первую строку и ставим курсор на нее.
                     text.push_back(buffer);
                     cursor = text.begin();
                 } else {
+                    // Вставляем строку ИМЕННО ПЕРЕД текущей (по условию).
+                    // Курсор в этом варианте оставляем на прежней строке.
                     text.insert(cursor, buffer);
                 }
             }
