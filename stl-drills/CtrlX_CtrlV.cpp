@@ -1,0 +1,134 @@
+/*
+Ctrl+X, Ctrl+V
+Петя решил написать свой собственный текстовый редактор и просит вас помочь протестировать его прототип. 
+На текущей стадии разработки в редакторе есть только возможность загрузить файл и выполнять с ним такие действия:
+
+- переместить курсор на строчку вниз (Down)
+- переместить курсор на строчку вверх (Up)
+- вырезать текущую строку в буфер обмена (Ctrl+X)
+- вставить строку из буфера перед текущей строкой (Ctrl+V)
+- Изначально курсор находится на первой (начальной) строке.
+
+Операции Down с курсором на последней строке и Up с курсором на первой строке должны игнорироваться.
+Любой текстовый файл в системе заканчивается переводом строки. Поэтому последняя строка любого файла является пустой. 
+Операция Ctrl+X на пустой строке ничего не делает.
+
+Изначально буфер редактора пустой. Операция Ctrl+X перезаписывает буфер, если в нём уже было какое-то значение. 
+Операция Ctrl+V не очищает буфер и может быть использована несколько раз подряд. Операция Ctrl+V при пустом буфере ничего не делает.
+
+Помогите Пете протестировать его текстовый редактор. 
+Напишите программу, которая по заданному файлу и набору команд выводит получившийся файл.
+
+Формат ввода
+Программе на вход подаётся набор строк, разделённых переносом строки. 
+Длина каждой строки не превышает 3000 символов. 
+Последняя строка в файле является пустой. Она означает завершение ввода файла. 
+Других пустых строк в файле быть не может.
+
+После этого и до окончания ввода программе подаются команды Down, Up, Ctrl+X, Ctrl+V.
+
+Формат вывода
+Выведите получившийся файл построчно.
+
+Пример 1                Пример 2
+Ввод                       Ввод
+program                   copy
+is awesome              paste
+My
+is awful                   Ctrl+X
+                              Ctrl+V
+Down                     Ctrl+V
+Down                     Ctrl+V
+Down                     Ctrl+X
+Ctrl+X                    Ctrl+V
+Up                         Ctrl+V
+Ctrl+X                   Ctrl+V
+Up
+Up
+Ctrl+V
+
+Вывод                   Вывод
+My                        copy
+program                 copy
+is awesome            copy
+                            paste
+                            paste
+                            paste
+
+Примечание
+Если условие кажется вам запутанным, попробуйте воспользоваться настоящим текстовым редактором, например Sublime. 
+Создайте пустой файл, вставьте любой пример из условия и исполняйте заданные команды. 
+В итоге вы должны получить точно такой же файл, как в ответе. 
+Таким образом описанное в условии поведение в точности соответствует поведению множества настоящих текстовых редакторов.
+
+Используйте std::getline для считывания строчек файла.
+*/
+
+
+#include <iostream>
+#include <list>
+#include <string>
+
+int main() {
+    std::list<std::string> text;
+    std::string line;
+
+    while (std::getline(std::cin, line)) {
+        text.push_back(line);
+    }
+
+    std::list<std::string> commands;
+
+    while (!text.empty()) {
+        std::string s = text.back();
+        if (s == "Up" || s == "Down" || s == "Ctrl+X" || s == "Ctrl+V") {
+            commands.push_front(s);
+            text.pop_back();
+        } else {
+            break;
+        }
+    }
+
+    auto cursor = text.begin();
+    std::string buffer;
+
+    for (const auto& cmd : commands) {
+        if (cmd == "Down") {
+            auto it = cursor;
+            if (it != text.end()) ++it;
+            if (it != text.end()) cursor = it;
+        }
+        else if (cmd == "Up") {
+            if (cursor != text.begin()) --cursor;
+        }
+        else if (cmd == "Ctrl+X") {
+            if (cursor != text.end() && !cursor->empty()) {
+                buffer = *cursor;
+
+                auto next = std::next(cursor);
+                auto prev = (cursor == text.begin() ? text.end() : std::prev(cursor));
+
+                text.erase(cursor);
+
+                if (next != text.end()) cursor = next;
+                else if (prev != text.end()) cursor = prev;
+                else cursor = text.end();
+            }
+        }
+        else if (cmd == "Ctrl+V") {
+            if (!buffer.empty()) {
+                if (text.empty()) {
+                    text.push_back(buffer);
+                    cursor = text.begin();
+                } else {
+                    text.insert(cursor, buffer);
+                }
+            }
+        }
+    }
+    for (const auto& s : text) {
+        std::cout << s << '\n';
+    }
+
+    return 0;
+}
