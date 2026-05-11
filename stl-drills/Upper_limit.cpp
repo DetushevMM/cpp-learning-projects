@@ -33,54 +33,40 @@
 #include <iostream>
 #include <set>
 
+class MySet {
+  std::set<int> values_;
+  int prev_ = 0;
+
+ public:
+  void Add(int value) {
+    values_.insert((value + prev_) % 1'000'000'000);
+    prev_ = 0;
+  }
+
+  int Next(int value) {
+    auto elem = values_.lower_bound(value);
+    if (elem != values_.end()) {
+      prev_ = *elem;
+      return prev_;
+    }
+    prev_ = 0;
+    return -1;
+  }
+};
+
 int main() {
-  int n = 0;
-  std::cin >> n; // Количество операций
+  size_t n_ops = 0;
+  std::cin >> n_ops;
 
-  // Множество для хранения чисел (автоматически отсортированы)
-  std::set<int> set_num;
-
-  const int mod = 1000000000;
-
-  // Результат последнего запроса "?" для вычисления параметров при добавлении после запроса
-  int last_answer = 0;
-
-  // Флаг, была ли предыдущая операция запросом "?"
-  // Если true, то следующая операция "+" использует last_answer
-  bool last_query = false;
-
-  for (int i = 0; i < n; ++i) {
-    char operation = 0; // тип операции + или ?
-    int x = 0;          // параметр операции
-
-    std::cin >> operation >> x;
-
-    if (operation == '+') {
-      // Если предыдущая операция была "?", то меняем параметр
-      if (last_query && last_answer != -1) {
-        // по условию (i + y) mod 10^9, где y = last_answer. + mod добавляем для гарантии положительного результата
-        x = (x + last_answer) % mod;
-      }
-      // Добавим число в множество
-      set_num.insert(x);
-
-      // Сбрасывае флаг
-      last_query = false;
+  MySet s;
+  for (size_t i = 0; i < n_ops; ++i) {
+    char op = 0;
+    int value = 0;
+    std::cin >> op >> value;
+    if (op == '+') {
+      s.Add(value);
     } else {
-      // перация запроса ?
-      // s.lower_bound(x) - возвращаем итератор на первый элемент, который не меньше x
-      auto it = set_num.lower_bound(x);
-
-      // Если такого элемента нет и  оператор указывает на конец множества, выводим -1 элемент
-      if (it == set_num.end()) {
-        std::cout << -1 << '\n';
-        last_answer = -1;
-      } else {
-        // Выводим найденный минимальный элемент, не меньший чем x
-        std::cout << *it << '\n';
-        last_answer = *it;
-      }
-      last_query = true;
+      std::cout << s.Next(value) << '\n';
     }
   }
   return 0;
