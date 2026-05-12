@@ -38,30 +38,45 @@ Bank
 #include <unordered_map>
 #include <string>
 
+class BankAccaunts {
+  std::unordered_map<std::string, int> accounts_;
+
+ public:
+  void ChangeAmmount(const std::string& accaunt_name, int amount) {
+    accounts_[accaunt_name] += amount;
+  }
+
+  [[nodiscard]] std::pair<bool, int> GetMoney(const std::string& accaunt_name) const {
+    if (auto item = accounts_.find(accaunt_name); item != accounts_.end()) {
+      return {true, item->second};
+    }
+    return {false, 0};
+  }
+};
+
+const int kChangeType = 1;
+// const int kGetType = 2;
+
 int main() {
-  int n = 0;
+  size_t n = 0;
   std::cin >> n;
-
-  std::unordered_map<std::string, int> accounts;
-  for (int i = 0; i < n; ++i) {
+  BankAccaunts bank;
+  
+  for (size_t i = 0; i < n; ++i) {
     int type = 0;
-    std::cin >> type;
+    std::string account;
+    std::cin >> type >> account;
 
-    if (type == 1) {
-      std::string name;
+    if (type == kChangeType) {
       int value = 0;
-      std::cin >> name >> value;
-
-      accounts[name] += value;
-    } else if (type == 2) {
-      std::string name;
-      std::cin >> name;
-      
-      auto iter = accounts.find(name);
-      if (iter == accounts.end()) {
-        std::cout << "ERROR\n";
+      std::cin >> value;
+      bank.ChangeAmmount(account, value);
+    } else {  // const int kGetType = 2;
+      const auto res = bank.GetMoney(account);
+      if (res.first) {
+        std::cout << res.second << '\n';
       } else {
-        std::cout << iter->second << '\n';
+        std::cout << "ERROR\n";
       }
     }
   }
