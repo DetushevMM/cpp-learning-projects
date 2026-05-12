@@ -35,27 +35,33 @@ Ivanov envelope 5                        envelope 20
 #include <map>
 #include <string>
 
-int main() {
-  // внешний map сортирует покупаелей, а внутренний товары (buyer->(product->count))
-  std::map<std::string, std::map<std::string, size_t>> database;
-  
-  std::string buyer;    // имя покупателя
-  std::string product;  // название товара
-  size_t count = 0;     // количество товара
+class ShopDataBase {
+  // внешний map сортирует покупаелей, а внутренний - товары (buyer->(product->count))
+  std::map<std::string, std::map<std::string, size_t>> database_;
 
-  // чтение из файла до конца входного потока
-  while (std::cin >> buyer >> product >> count) {
-    database[buyer][product] += count;  // увеличиваем количество товара для конкретного покупателя
+ public:
+  void AddPurchase(const std::string& client, const std::string& item, size_t count) {
+    database_[client][item] += count;
   }
-  
-  // Проходим по всем покупателям в лексикографическом порядке
-  for (auto iter = database.begin(); iter != database.end(); ++iter) {
-    std::cout << iter->first << ':' << '\n';  // Выводим имя
 
-    // Проходим по товарам данного покупателя
-    for (auto jter = iter->second.begin(); jter != iter->second.end(); ++jter) {
-      std::cout << jter->first << ' ' << jter->second << '\n';  // выводим товар и суммарное количество
+  void Print() const {
+    for (const auto& [client, items] : database_) {
+      std::cout << client << ":\n";
+      for (const auto& [item, count] : items) {
+        std::cout << item << ' ' << count << '\n';
+      }
     }
   }
+};
+
+int main() {
+  ShopDataBase db;
+  std::string client;
+  std::string item;
+  size_t count = 0;
+  while (std::cin >> client >> item >> count) {
+    db.AddPurchase(client, item, count);
+  }
+  db.Print();
   return 0;
 }
