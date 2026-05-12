@@ -38,7 +38,7 @@ Bank
 #include <unordered_map>
 #include <string>
 
-class BankAccaunts {
+class BankAccounts {
   std::unordered_map<std::string, int> accounts_;
 
  public:
@@ -60,7 +60,7 @@ const int kChangeType = 1;
 int main() {
   size_t n = 0;
   std::cin >> n;
-  BankAccaunts bank;
+  BankAccounts bank;
   
   for (size_t i = 0; i < n; ++i) {
     int type = 0;
