@@ -24,8 +24,8 @@
 
 Пример
 Ввод                               Вывод
-5 3                                  Anna
-Anna 70 60 50                 Kirill
+5 3                                Anna
+Anna 70 60 50                      Kirill
 Danila 40 40 10
 Igor 90 80 20
 Kirill 50 60 70
